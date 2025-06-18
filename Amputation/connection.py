@@ -4,18 +4,21 @@ from databricks import sql
 class dbConnectionHandle():
     def __init__(self, connectionDetails, server_hostname, http_path, access_token):
         self.connectionDetails = connectionDetails
-
+        
         self.server_hostname = server_hostname
         self.http_path = http_path
         self.access_token = access_token
-
+    
     def dbConnect(self):
+        connectionDetails = open("databricksConnectionDetails.txt").read().splitlines()
         return sql.connect(
-            server_hostname=self.server_hostname,
-            http_path=self.http_path,
-            access_token=self.access_token
+            connection = dbConnectionHandle(
+                connectionDetails = connectionDetails,
+                server_hostname = connectionDetails[0],
+                http_path = connectionDetails[1],
+                access_token = connectionDetails[2])
         )
-
+    
     def dbInitializeCheck(self):
         dbConnectionHandle.signupSystem(self, "admin","admin123")
         connect = self.dbConnect()
@@ -28,18 +31,18 @@ class dbConnectionHandle():
         );''')
         connect.commit()
         connect.close()
-
+    
     def insertGameResult(self, userChoice, machineChoice, userID):
         connect = self.dbConnect()
         cursor = connect.cursor()
         sqlString = ("""INSERT INTO RPSResults (player1, player2, userID, currentTime)"""\
             """VALUES (?, ?, ?, CURRENT_TIMESTAMP);""")
         cursor.execute(sqlString, (userChoice, machineChoice, userID ))
-
+        
         connect.commit()
         connect.close()
         
-
+    
     def readGameResults(self):
         connect = self.dbConnect()
         cursor = connect.cursor()
@@ -53,7 +56,7 @@ class dbConnectionHandle():
         cursor.close()
         connect.close()
         return rows, col1, col2
-
+    
     def signupSystemVerify( username, password):
         if not username or not password:
             raise ValueError("Username and password cannot be empty.")
@@ -71,8 +74,8 @@ class dbConnectionHandle():
             raise ValueError("Password must contain at least one uppercase letter.")
         else:
             dbConnectionHandle.signupSystem()
-
-
+    
+    
     def signupSystem(self, signupUserName, signupUserPassword):
         connect = self.dbConnect()
         cursor = connect.cursor()
@@ -85,8 +88,8 @@ class dbConnectionHandle():
         connect.commit()
         connect.close()
         dbConnectionHandle.uploadSignupDetails(self, signupUserName, signupUserPassword)
-
-
+    
+    
     def uploadSignupDetails(self,signupUserName, signupUserPassword):
         signupUserName = signupUserName.strip().lower()
         signupUserPassword = signupUserPassword.strip()
@@ -99,16 +102,16 @@ class dbConnectionHandle():
         connect.commit()
         connect.close()
         return ("Signup successful. You can now login with your credentials.")
-
+    
     def loginINIT(self, loginUserName, loginUserPassword):
         dbConnectionHandle.loginSystemVerify(self, loginUserName, loginUserPassword)
-
+    
     def loginSystemVerify(self, loginUserName, loginUserPassword):
         if not loginUserName or not loginUserPassword:
             raise ValueError("Username and password cannot be empty.")
         else:
             dbConnectionHandle.loginSystemCheck(self, loginUserName, loginUserPassword)
-
+    
     def loginSystemCheck(self, loginUserName, loginUserPassword):
         loginUserName = loginUserName.strip().lower()
         loginUserPassword = loginUserPassword.strip()
@@ -122,8 +125,8 @@ class dbConnectionHandle():
         userID = cursor.fetchone()
         connect.close()
         return "login successful"
-
-
+    
+    
     def leaderboardMainSystem(self):
         self.dbInitializeCheck()
         connect = self.dbConnect()
@@ -140,8 +143,8 @@ class dbConnectionHandle():
         cursor.execute(sqlString)
         connect.commit()
         connect.close()
-        
-
+    
+    
     def getLeaderboardTop10(self):
         # Ensure the winCount view exists
         dbConnectionHandle.leaderboardMainSystem(self)
@@ -158,7 +161,7 @@ class dbConnectionHandle():
         results = cursor.fetchall()
         connect.close()
         return results
-
+    
     def userIDcheck(userID):
         if userID is None:
             return("User ID is not set. Please login or signup first.")

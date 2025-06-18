@@ -10,12 +10,7 @@ from encrypting import decrypt
 
 openai.api_key = decrypt()
 
-connectionDetails = open("databricksConnectionDetails.txt").read().splitlines()
-connection = db(
-    connectionDetails = connectionDetails,
-    server_hostname = connectionDetails[0],
-    http_path = connectionDetails[1],
-    access_token = connectionDetails[2])
+
 
 
 def showProbabilityOptions(machineAlgorithm):
