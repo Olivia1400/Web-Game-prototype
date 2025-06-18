@@ -1,0 +1,7 @@
+cryptography==41.0.7
+cryptography.egg==info
+databricks==0.2
+gradio==5.34.1
+openai==1.88.0
+pandas==2.3.0
+scikit_learn==1.7.0
