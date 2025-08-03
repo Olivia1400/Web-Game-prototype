@@ -1,3 +1,0 @@
-dbc-3ab1337d-0158.cloud.databricks.com
-/sql/1.0/warehouses/f6057f440de14497
-dapi2517c71cc3dedea5e99c1524cdfee8c5
